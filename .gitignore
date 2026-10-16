@@ -1,0 +1,100 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+/dist
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*
+!.env.example
+!.env.*.example
+!**/.env.example
+!**/.env.template
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# PM2
+.pm2/
+ecosystem.config.js.backup
+
+# Docker
+.env.docker
+docker-compose.override.yml
+
+# Backups
+*.sql
+*.backup
+*.bak
+
+# Uploads (Strapi)
+cms/public/uploads/*
+!cms/public/uploads/.gitkeep
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+cms/.tmp/
+cms/data/
+
+# Medusa
+commerce/.medusa/
+commerce/data/
+
+# Cache
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+dist/
+.cache/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+temp/

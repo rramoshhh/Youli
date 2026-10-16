@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: youli-postgres
+    environment:
+      POSTGRES_USER: youli
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+      POSTGRES_DB: youli_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - youli-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U youli"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: youli-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - youli-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Medusa Commerce Backend
+  medusa:
+    build:
+      context: ./commerce
+      dockerfile: Dockerfile
+    container_name: youli-medusa
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://youli:${POSTGRES_PASSWORD:-change_me_in_production}@postgres:5432/youli_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${MEDUSA_JWT_SECRET:-change_me_in_production}
+      COOKIE_SECRET: ${MEDUSA_COOKIE_SECRET:-change_me_in_production}
+      MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL:-http://localhost:9000}
+      ADMIN_CORS: ${ADMIN_CORS:-http://localhost:7001,http://localhost:9000}
+      STORE_CORS: ${STORE_CORS:-http://localhost:3000}
+    ports:
+      - "9000:9000"
+    networks:
+      - youli-network
+    restart: unless-stopped
+
+  # Strapi CMS
+  strapi:
+    build:
+      context: ./cms
+      dockerfile: Dockerfile
+    container_name: youli-strapi
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 1337
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: youli_db
+      DATABASE_USERNAME: youli
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+      DATABASE_SSL: false
+      APP_KEYS: ${STRAPI_APP_KEYS:-change_me_in_production}
+      API_TOKEN_SALT: ${STRAPI_API_TOKEN_SALT:-change_me_in_production}
+      ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET:-change_me_in_production}
+      TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT:-change_me_in_production}
+      JWT_SECRET: ${STRAPI_JWT_SECRET:-change_me_in_production}
+    ports:
+      - "1337:1337"
+    volumes:
+      - strapi_uploads:/app/public/uploads
+    networks:
+      - youli-network
+    restart: unless-stopped
+
+  # Next.js Storefront
+  storefront:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: youli-storefront
+    depends_on:
+      - medusa
+      - strapi
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      MEDUSA_API_URL: ${MEDUSA_API_URL:-http://medusa:9000}
+      MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY}
+      STRAPI_API_URL: ${STRAPI_API_URL:-http://strapi:1337}
+      STRAPI_API_TOKEN: ${STRAPI_API_TOKEN}
+    ports:
+      - "3000:3000"
+    networks:
+      - youli-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  strapi_uploads:
+    driver: local
+
+networks:
+  youli-network:
+    driver: bridge
