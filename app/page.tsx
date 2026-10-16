@@ -4,8 +4,8 @@ import { formatCurrency } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
 import CollectionCard from '@/components/CollectionCard';
 import SectionTitle from '@/components/SectionTitle';
-import { addToCart } from '@/app/cart/actions';
 import SmartImage from '@/components/SmartImage';
+import AddToCartButton from '@/components/cart/AddToCartButton';
 
 export const revalidate = 120;
 
@@ -124,14 +124,7 @@ export default async function HomePage() {
                 </button>
               ))}
             </div>
-            <form action={addToCart}>
-              <input type="hidden" name="slug" value={highlight.slug} />
-              <input type="hidden" name="qty" value="1" />
-              <input type="hidden" name="redirectTo" value="/cart#cart-top" />
-              <button className="cta primary add-to-bag" type="submit">
-                Add to Bag
-              </button>
-            </form>
+            <AddToCartButton product={highlight} className="cta primary add-to-bag" />
             <ul className="badge-list" aria-label="Atelier notes">
               <li>Refined fit</li>
               <li>Studio-reviewed</li>

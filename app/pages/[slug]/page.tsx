@@ -1,12 +1,19 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPageBySlug } from '@/lib/clients/strapi';
+import { pages as fallbackPages } from '@/lib/data/content';
 
 export const revalidate = 300;
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+export function generateStaticParams() {
+  return fallbackPages.map((page) => ({ slug: page.slug }));
+}
+
+export const dynamicParams = false;
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;

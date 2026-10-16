@@ -1,6 +1,7 @@
 import Image, { ImageProps } from 'next/image';
 
 const isRemote = (src: string) => src.startsWith('http://') || src.startsWith('https://');
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 type SmartImageProps = Omit<ImageProps, 'src'> & {
   src?: string;
@@ -21,11 +22,12 @@ export default function SmartImage({
   ...rest
 }: SmartImageProps) {
   const resolvedSrc = src && src.trim() ? src : fallbackSrc;
+  const publicSrc = resolvedSrc.startsWith('/') ? `${basePath}${resolvedSrc}` : resolvedSrc;
 
-  if (isRemote(resolvedSrc)) {
+  if (isRemote(publicSrc)) {
     return (
       <img
-        src={resolvedSrc}
+        src={publicSrc}
         alt={alt}
         width={width}
         height={height}
@@ -39,7 +41,7 @@ export default function SmartImage({
 
   return (
     <Image
-      src={resolvedSrc}
+      src={publicSrc}
       alt={alt}
       width={width}
       height={height}

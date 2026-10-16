@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Manrope } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/site/Header';
 import Footer from '@/components/site/Footer';
+import { CartProvider } from '@/components/cart/CartProvider';
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -56,16 +57,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${cormorant.variable} ${manrope.variable}`}>
-        <a className="skip-link" href="#main-content">
-          Skip to content
-        </a>
-        <div className="noise" aria-hidden="true"></div>
-        <div className="backdrop" aria-hidden="true"></div>
-        <Header />
-        <main id="main-content" tabIndex={-1}>
-          {children}
-        </main>
-        <Footer />
+        <CartProvider>
+          <a className="skip-link" href="#main-content">
+            Skip to content
+          </a>
+          <div className="noise" aria-hidden="true"></div>
+          <div className="backdrop" aria-hidden="true"></div>
+          <Header />
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

@@ -13,6 +13,12 @@ type CollectionPageProps = {
   params: Promise<{ handle: string }>;
 };
 
+export function generateStaticParams() {
+  return fallbackCollections.map((collection) => ({ handle: collection.handle }));
+}
+
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: CollectionPageProps) {
   const { handle } = await params;
   const norm = normalizedHandle(handle);

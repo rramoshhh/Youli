@@ -4,14 +4,21 @@ import { getProductBySlug, listProducts } from '@/lib/clients/medusa';
 import { formatCurrency } from '@/lib/utils';
 import SectionTitle from '@/components/SectionTitle';
 import ProductCard from '@/components/ProductCard';
-import { addToCart } from '@/app/cart/actions';
 import SmartImage from '@/components/SmartImage';
+import AddToCartButton from '@/components/cart/AddToCartButton';
+import { products as fallbackProducts } from '@/lib/data/products';
 
 export const revalidate = 120;
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
+
+export function generateStaticParams() {
+  return fallbackProducts.map((product) => ({ slug: product.slug }));
+}
+
+export const dynamicParams = false;
 
 export async function generateMetadata({ params }: ProductPageProps) {
   const { slug } = await params;
@@ -67,14 +74,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </button>
             ))}
           </div>
-          <form action={addToCart}>
-            <input type="hidden" name="slug" value={product.slug} />
-            <input type="hidden" name="qty" value="1" />
-            <input type="hidden" name="redirectTo" value="/cart#cart-top" />
-            <button className="cta primary add-to-bag" type="submit">
-              Add to Bag
-            </button>
-          </form>
+          <AddToCartButton product={product} className="cta primary add-to-bag" />
           <div className="trust-badges" aria-label="Product notes">
             <span>Atelier finishing</span>
             <span>Soft-touch materials</span>

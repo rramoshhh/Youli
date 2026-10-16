@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils';
-import { addToCart } from '@/app/cart/actions';
 import SmartImage from '@/components/SmartImage';
+import AddToCartButton from '@/components/cart/AddToCartButton';
 
 type ProductCardProps = {
   product: Product;
@@ -45,12 +45,7 @@ export default function ProductCard({ product, priority = false, showBadge = tru
             <Link className="cta mini" href={`/products/${product.slug}`}>
               Quick View
             </Link>
-            <form action={addToCart}>
-              <input type="hidden" name="slug" value={product.slug} />
-              <input type="hidden" name="qty" value="1" />
-              <input type="hidden" name="redirectTo" value="/cart#cart-top" />
-              <button className="cta mini" type="submit">Add to Bag</button>
-            </form>
+            <AddToCartButton product={product} />
           </div>
         </div>
       </div>

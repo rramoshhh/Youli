@@ -1,5 +1,7 @@
 # Youli-Next
 
+The repository publishes a live storefront demo through GitHub Pages on every push to `main`. The demo includes the full catalog, product and collection routes, and a browser-saved cart and checkout walkthrough. Open the latest `github-pages` deployment from the repository's **Deployments** section.
+
 Youli-Next is a Next.js storefront intended to work with a Medusa commerce backend and a Strapi CMS. The storefront can run standalone with fallback content when those services are not configured.
 
 ## Table of Contents
